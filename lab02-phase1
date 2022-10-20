@@ -1,0 +1,27 @@
+// trying to find secret phrase
+// firstly looking at the main
+// phase_1 call looks familiar
+(gdb) disas main
+Dump of assembler code for function main:
+   0x0000000000001489 <+0>:	endbr64 
+   0x000000000000148d <+4>:	push   %rbx
+   0x000000000000148e <+5>:	cmp    $0x1,%edi
+   0x0000000000001491 <+8>:	je     0x1583 <main+250>
+   0x0000000000001497 <+14>:	mov    %rsi,%rbx
+   0x000000000000149a <+17>:	cmp    $0x2,%edi
+   0x000000000000149d <+20>:	jne    0x15b8 <main+303>
+   0x00000000000014a3 <+26>:	mov    0x8(%rsi),%rdi
+   0x00000000000014a7 <+30>:	lea    0x1b56(%rip),%rsi        # 0x3004
+   0x00000000000014ae <+37>:	callq  0x1310 <fopen@plt>
+   0x00000000000014b3 <+42>:	mov    %rax,0x41f6(%rip)        # 0x56b0 <infile>
+   0x00000000000014ba <+49>:	test   %rax,%rax
+   0x00000000000014bd <+52>:	je     0x1596 <main+269>
+   0x00000000000014c3 <+58>:	callq  0x1bad <initialize_program>
+   0x00000000000014c8 <+63>:	lea    0x1bb9(%rip),%rdi        # 0x3088
+   0x00000000000014cf <+70>:	callq  0x1230 <puts@plt>
+   0x00000000000014d4 <+75>:	callq  0x1eae <read_line>
+   0x00000000000014d9 <+80>:	mov    %rax,%rdi
+   0x00000000000014dc <+83>:	callq  0x15db <phase_1>
+   0x00000000000014e1 <+88>:	callq  0x1ff6 <phase_unlocked>
+   0x00000000000014e6 <+93>:	lea    0x1bf3(%rip),%rdi        # 0x30e0
+--Type <RET> for more, q to quit, c to continue without paging--Quit
