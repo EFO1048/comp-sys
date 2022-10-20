@@ -25,3 +25,43 @@ Dump of assembler code for function main:
    0x00000000000014e1 <+88>:	callq  0x1ff6 <phase_unlocked>
    0x00000000000014e6 <+93>:	lea    0x1bf3(%rip),%rdi        # 0x30e0
 --Type <RET> for more, q to quit, c to continue without paging--Quit
+
+// disassemble phase 1 to see what is happening
+// probably safe to assume strings_not_equal is taking two arguments
+// now we need to figure out where those arguments are
+(gdb) disas phase_1
+Dump of assembler code for function phase_1:
+   0x00000000000015db <+0>:	endbr64 
+   0x00000000000015df <+4>:	sub    $0x8,%rsp
+   0x00000000000015e3 <+8>:	lea    0x1b4e(%rip),%rsi        # 0x3138
+   0x00000000000015ea <+15>:	callq  0x1b4d <strings_not_equal> // this looks like an important function
+   0x00000000000015ef <+20>:	test   %eax,%eax
+   0x00000000000015f1 <+22>:	jne    0x15f8 <phase_1+29> // if not equal crash the program
+   0x00000000000015f3 <+24>:	add    $0x8,%rsp 
+   0x00000000000015f7 <+28>:	retq   
+   0x00000000000015f8 <+29>:	callq  0x1e27 <crash_program>
+   0x00000000000015fd <+34>:	jmp    0x15f3 <phase_1+24>
+End of assembler dump.
+
+// rsi and rdi are by default the first two registers used to pass values to a function in assembly
+// rdi first, rsi second
+// so let's investigate, but firstly we need to set a breakpoint at strings not equal to check
+(gdb) break strings_not_equal
+Breakpoint 1 at 0x1b4d
+
+(gdb) run
+Starting program: /home/emma-obrien/Desktop/program18/program 
+I am a locked program. You have 6 phases to unlock in order to unlock me entirely!
+Any input
+
+Breakpoint 1, 0x0000555555555b4d in strings_not_equal ()
+// xs is used to check string values at a certain register
+(gdb) x/s $rsi
+// here is the value it is comparing to (second argument)
+0x555555557138:	"There are rumors on the internets."
+(gdb) x/s $rdi
+// here is our input (first argument)
+0x5555555596c0 <input_strings>:	"Any input"
+
+
+// ANSWER: There are rumors on the internets.
