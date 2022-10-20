@@ -1,0 +1,60 @@
+// similar to phase_1 there is a phase_2 function
+// right away I notice that read_six_numbers function
+Dump of assembler code for function phase_2:
+   0x00000000000015ff <+0>:	  endbr64 
+   0x0000000000001603 <+4>:	  push   %rbp
+   0x0000000000001604 <+5>:	  push   %rbx
+   0x0000000000001605 <+6>:	  sub    $0x28,%rsp
+   0x0000000000001609 <+10>:	mov    %fs:0x28,%rax
+   0x0000000000001612 <+19>:	mov    %rax,0x18(%rsp)
+   0x0000000000001617 <+24>:	xor    %eax,%eax
+   0x0000000000001619 <+26>:	mov    %rsp,%rsi
+   0x000000000000161c <+29>:	callq  0x1e69 <read_six_numbers> // here is the suspect
+   0x0000000000001621 <+34>:	cmpl   $0x0,(%rsp)
+   0x0000000000001625 <+38>:	js     0x1631 <phase_2+50>
+   0x0000000000001627 <+40>:	mov    %rsp,%rbp
+   0x000000000000162a <+43>:	mov    $0x1,%ebx
+   0x000000000000162f <+48>:	jmp    0x1649 <phase_2+74>
+   0x0000000000001631 <+50>:	callq  0x1e27 <crash_program>
+   0x0000000000001636 <+55>:	jmp    0x1627 <phase_2+40>
+   0x0000000000001638 <+57>:	callq  0x1e27 <crash_program>
+   0x000000000000163d <+62>:	add    $0x1,%ebx
+   0x0000000000001640 <+65>:	add    $0x4,%rbp
+   0x0000000000001644 <+69>:	cmp    $0x6,%ebx
+   0x0000000000001647 <+72>:	je     0x1655 <phase_2+86>
+   0x0000000000001649 <+74>:	mov    %ebx,%eax
+   0x000000000000164b <+76>:	add    0x0(%rbp),%eax
+   0x000000000000164e <+79>:	cmp    %eax,0x4(%rbp)
+   0x0000000000001651 <+82>:	je     0x163d <phase_2+62>
+   0x0000000000001653 <+84>:	jmp    0x1638 <phase_2+57>
+   0x0000000000001655 <+86>:	mov    0x18(%rsp),%rax
+   0x000000000000165a <+91>:	xor    %fs:0x28,%rax
+   0x0000000000001663 <+100>:	jne    0x166c <phase_2+109>
+   0x0000000000001665 <+102>:	add    $0x28,%rsp
+   0x0000000000001669 <+106>:	pop    %rbx
+--Type <RET> for more, q to quit, c to continue without paging--
+
+// lets disas the read_six_numbers
+(gdb) disas read_six_numbers
+Dump of assembler code for function read_six_numbers:
+   0x0000000000001e69 <+0>:	  endbr64 
+   0x0000000000001e6d <+4>:	  sub    $0x8,%rsp
+   0x0000000000001e71 <+8>:	  mov    %rsi,%rdx
+   0x0000000000001e74 <+11>:	lea    0x4(%rsi),%rcx
+   0x0000000000001e78 <+15>:	lea    0x14(%rsi),%rax
+   0x0000000000001e7c <+19>:	push   %rax
+   0x0000000000001e7d <+20>:	lea    0x10(%rsi),%rax
+   0x0000000000001e81 <+24>:	push   %rax
+   0x0000000000001e82 <+25>:	lea    0xc(%rsi),%r9
+   0x0000000000001e86 <+29>:	lea    0x8(%rsi),%r8
+   0x0000000000001e8a <+33>:	lea    0x1567(%rip),%rsi        # 0x33f8
+   0x0000000000001e91 <+40>:	mov    $0x0,%eax
+   0x0000000000001e96 <+45>:	callq  0x12f0 <__isoc99_sscanf@plt>
+   0x0000000000001e9b <+50>:	add    $0x10,%rsp
+   0x0000000000001e9f <+54>:	cmp    $0x5,%eax
+   0x0000000000001ea2 <+57>:	jle    0x1ea9 <read_six_numbers+64>
+   0x0000000000001ea4 <+59>:	add    $0x8,%rsp
+   0x0000000000001ea8 <+63>:	retq   
+   0x0000000000001ea9 <+64>:	callq  0x1e27 <crash_program>
+End of assembler dump.
+(gdb) 
