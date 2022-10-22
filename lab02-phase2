@@ -1,38 +1,46 @@
 // similar to phase_1 there is a phase_2 function
 // right away I notice that read_six_numbers function
+// there is a for loop in here
 Dump of assembler code for function phase_2:
    0x00000000000015ff <+0>:	  endbr64 
-   0x0000000000001603 <+4>:	  push   %rbp
+   0x0000000000001603 <+4>:	  push   %rbp // creating space in the stack
    0x0000000000001604 <+5>:	  push   %rbx
    0x0000000000001605 <+6>:	  sub    $0x28,%rsp
    0x0000000000001609 <+10>:	mov    %fs:0x28,%rax
    0x0000000000001612 <+19>:	mov    %rax,0x18(%rsp)
-   0x0000000000001617 <+24>:	xor    %eax,%eax
-   0x0000000000001619 <+26>:	mov    %rsp,%rsi
-   0x000000000000161c <+29>:	callq  0x1e69 <read_six_numbers> // here is the suspect
-   0x0000000000001621 <+34>:	cmpl   $0x0,(%rsp)
-   0x0000000000001625 <+38>:	js     0x1631 <phase_2+50>
-   0x0000000000001627 <+40>:	mov    %rsp,%rbp
-   0x000000000000162a <+43>:	mov    $0x1,%ebx
-   0x000000000000162f <+48>:	jmp    0x1649 <phase_2+74>
+   0x0000000000001617 <+24>:	xor    %eax,%eax // setting ax to 0
+   0x0000000000001619 <+26>:	mov    %rsp,%rsi // copy of where we are in our pointer stack
+   0x000000000000161c <+29>:	callq  0x1e69 <read_six_numbers> // hTHIS IS READING YOUR NUMBERS AND STORING IN EAX
+   0x0000000000001621 <+34>:	cmpl   $0x0,(%rsp) // if the number at the top of the stack is negative then crash the program
+   0x0000000000001625 <+38>:	js     0x1631 <phase_2+50> // jumps 
+   
+   0x0000000000001627 <+40>:	mov    %rsp,%rbp // rbp is the value we want to stop working at
+   0x000000000000162a <+43>:	mov    $0x1,%ebx 
+   0x000000000000162f <+48>:	jmp    0x1649 <phase_2+74> // bypass crash
+   
    0x0000000000001631 <+50>:	callq  0x1e27 <crash_program>
    0x0000000000001636 <+55>:	jmp    0x1627 <phase_2+40>
    0x0000000000001638 <+57>:	callq  0x1e27 <crash_program>
    0x000000000000163d <+62>:	add    $0x1,%ebx
    0x0000000000001640 <+65>:	add    $0x4,%rbp
-   0x0000000000001644 <+69>:	cmp    $0x6,%ebx
+   0x0000000000001644 <+69>:	cmp    $0x6,%ebx // checking IF it is six numbers
    0x0000000000001647 <+72>:	je     0x1655 <phase_2+86>
    0x0000000000001649 <+74>:	mov    %ebx,%eax
    0x000000000000164b <+76>:	add    0x0(%rbp),%eax
-   0x000000000000164e <+79>:	cmp    %eax,0x4(%rbp)
-   0x0000000000001651 <+82>:	je     0x163d <phase_2+62>
-   0x0000000000001653 <+84>:	jmp    0x1638 <phase_2+57>
-   0x0000000000001655 <+86>:	mov    0x18(%rsp),%rax
+   0x000000000000164e <+79>:	cmp    %eax,0x4(%rbp) 
+   0x0000000000001651 <+82>:	je     0x163d <phase_2+62> 
+   0x0000000000001653 <+84>:	jmp    0x1638 <phase_2+57> // CRASH
+   0x0000000000001655 <+86>:	mov    0x18(%rsp),%rax 
    0x000000000000165a <+91>:	xor    %fs:0x28,%rax
-   0x0000000000001663 <+100>:	jne    0x166c <phase_2+109>
+   0x0000000000001663 <+100>:	jne    0x166c <phase_2+109> // DONE
    0x0000000000001665 <+102>:	add    $0x28,%rsp
    0x0000000000001669 <+106>:	pop    %rbx
---Type <RET> for more, q to quit, c to continue without paging--
+   0x0000000000001665 <+102>:	add    $0x28,%rsp
+   0x0000000000001669 <+106>:	pop    %rbx
+   0x000000000000166a <+107>:	pop    %rbp
+   0x000000000000166b <+108>:	retq   
+   0x000000000000166c <+109>:	callq  0x1250 <__stack_chk_fail@plt>
+
 
 // lets disas the read_six_numbers
 (gdb) disas read_six_numbers
