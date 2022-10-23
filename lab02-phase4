@@ -1,30 +1,53 @@
+Notes on this phase:
+   - We have to input two numbers
+   - The first number must be a value between 2 and 14
+   - The second value is produced in the function <func4> which is recursive
+
+
 (gdb) disas phase_4
 Dump of assembler code for function phase_4:
    0x000000000000178e <+0>:	endbr64 
    0x0000000000001792 <+4>:	sub    $0x18,%rsp
    0x0000000000001796 <+8>:	mov    %fs:0x28,%rax
    0x000000000000179f <+17>:	mov    %rax,0x8(%rsp)
+   
+   // remember how we zero out that eax register using xor, here it is again
+   
    0x00000000000017a4 <+22>:	xor    %eax,%eax
    0x00000000000017a6 <+24>:	lea    0x4(%rsp),%rcx
-   0x00000000000017ab <+29>:	mov    %rsp,%rdx
+   0x00000000000017ab <+29>:	mov    %rsp,%rdx // rdx is storing our input 
    0x00000000000017ae <+32>:	lea    0x1c4f(%rip),%rsi        # 0x3404
    
    // uh oh we have another scanf function looking for our input
    // let's come back to that and check to see if anything else looks suspicious
+   // oh shoot, okay so remember in phase_3 how rsi gave us some hints with scanf?
+   // lets try this again (do this AT <+39>
    
+   (gdb) x/s $rsi
+   "%d %d" // Two numbers again! Yay!
    0x00000000000017b5 <+39>:	callq  0x12f0 <__isoc99_sscanf@plt>
+   
+   // this is testing that the user gave two inputs
+   
    0x00000000000017ba <+44>:	cmp    $0x2,%eax
-   0x00000000000017bd <+47>:	jne    0x17c5 <phase_4+55>
+   0x00000000000017bd <+47>:	jne    0x17c5 <phase_4+55> // crash!
+   
+   // It seems that this is saying the first input must be less than 14 (or 0xe)
+   
    0x00000000000017bf <+49>:	cmpl   $0xe,(%rsp)
    0x00000000000017c3 <+53>:	jbe    0x17ca <phase_4+60>
    0x00000000000017c5 <+55>:	callq  0x1e27 <crash_program>
-   0x00000000000017ca <+60>:	mov    $0xe,%edx
+   
+   0x00000000000017ca <+60>:	mov    $0xe,%edx // setting edx to 14, very important later
    0x00000000000017cf <+65>:	mov    $0x0,%esi
    0x00000000000017d4 <+70>:	mov    (%rsp),%edi
    
    // func4???? hmmm....
    
    0x00000000000017d7 <+73>:	callq  0x174d <func4>
+   
+   // we want the value of func4 to return 7
+   
    0x00000000000017dc <+78>:	cmp    $0x7,%eax
    0x00000000000017df <+81>:	jne    0x17e8 <phase_4+90>
    0x00000000000017e1 <+83>:	cmpl   $0x7,0x4(%rsp)
@@ -37,18 +60,29 @@ Dump of assembler code for function phase_4:
    0x0000000000001801 <+115>:	retq   
    0x0000000000001802 <+116>:	callq  0x1250 <__stack_chk_fail@plt>
 
+
+// here we have a new assembly concept being used
+// if you will check <+42> you see jsut the function is called again, not a new location, but the function itself
+// This is starting to look like recursion, not sure if that will come into play but we will see
+
 (gdb) disas func4
 Dump of assembler code for function func4:
    0x000000000000174d <+0>:	endbr64 
-   0x0000000000001751 <+4>:	sub    $0x8,%rsp
-   0x0000000000001755 <+8>:	mov    %edx,%eax
-   0x0000000000001757 <+10>:	sub    %esi,%eax
-   0x0000000000001759 <+12>:	mov    %eax,%ecx
-   0x000000000000175b <+14>:	shr    $0x1f,%ecx
-   0x000000000000175e <+17>:	add    %eax,%ecx
-   0x0000000000001760 <+19>:	sar    %ecx
-   0x0000000000001762 <+21>:	add    %esi,%ecx
-   0x0000000000001764 <+23>:	cmp    %edi,%ecx
+   0x0000000000001751 <+4>:	sub    $0x8,%rsp // stack pointer stuff
+   
+   // weird math section, lots of arithmetic stuff going on here
+   // Here's the thing, you don't need to understand all this because at <+78> we know that the second number has to be 7
+   // You also know that the first is in between 2 and 14
+   // Plug and chug baby, plug and chug
+   
+   0x0000000000001755 <+8>:	mov    %edx,%eax // eax = 14
+   0x0000000000001757 <+10>:	sub    %esi,%eax // eax = eax - esi (esi is empty first run)
+   0x0000000000001759 <+12>:	mov    %eax,%ecx // ecx = 14
+   0x000000000000175b <+14>:	shr    $0x1f,%ecx // shifting 14 right 31 (returns MSB which happens to be zero)
+   0x000000000000175e <+17>:	add    %eax,%ecx // 14 + 0 = 14
+   0x0000000000001760 <+19>:	sar    %ecx // ecx / 2= 7
+   0x0000000000001762 <+21>:	add    %esi,%ecx // 0 + 14 = 0
+   0x0000000000001764 <+23>:	cmp    %edi,%ecx 
    0x0000000000001766 <+25>:	jg     0x1774 <func4+39>
    0x0000000000001768 <+27>:	mov    $0x0,%eax
    0x000000000000176d <+32>:	jl     0x1780 <func4+51>
@@ -63,3 +97,6 @@ Dump of assembler code for function func4:
    0x0000000000001788 <+59>:	lea    0x1(%rax,%rax,1),%eax
    0x000000000000178c <+63>:	jmp    0x176f <func4+34>
 End of assembler dump.
+
+// SOLUTION: 14 7
+// SOLUTION: 
