@@ -1,7 +1,14 @@
+// key to phase 2 is continuing to watch the ax register
+// this phase is based on a for loop, let's find out what all this does
+
+// this function is not what it seems right away
+// at first I thought this is where everything takes places
+// however, this function moreso just acts as a scanf function
+// this handles the user input, not comparing it to the desired string
 (gdb) disas read_six_numbers
 Dump of assembler code for function read_six_numbers:
    0x0000000000001e69 <+0>:	endbr64 
-   0x0000000000001e6d <+4>:	sub    $0x8,%rsp
+   0x0000000000001e6d <+4>:	sub    $0x8,%rsp // creating some records on the stack 
    0x0000000000001e71 <+8>:	mov    %rsi,%rdx
    0x0000000000001e74 <+11>:	lea    0x4(%rsi),%rcx
    0x0000000000001e78 <+15>:	lea    0x14(%rsi),%rax
@@ -12,10 +19,17 @@ Dump of assembler code for function read_six_numbers:
    0x0000000000001e86 <+29>:	lea    0x8(%rsi),%r8
    0x0000000000001e8a <+33>:	lea    0x1567(%rip),%rsi        # 0x33f8
    0x0000000000001e91 <+40>:	mov    $0x0,%eax
-   0x0000000000001e96 <+45>:	callq  0x12f0 <__isoc99_sscanf@plt>
+   0x0000000000001e96 <+45>:	callq  0x12f0 <__isoc99_sscanf@plt> // key to understanding this 
    0x0000000000001e9b <+50>:	add    $0x10,%rsp
+   
+   // while this function isn't key to solving the phase, here is an important components
+   // this comparing statement is actually testing the LENGTH of eax 
+   // if there is less than or equal to 5 items in EAX, then crash the program 
+   // first oppurtunity to mess up, if you don't have six numbers then you are wrong
    0x0000000000001e9f <+54>:	cmp    $0x5,%eax
    0x0000000000001ea2 <+57>:	jle    0x1ea9 <read_six_numbers+64>
+   
+   
    0x0000000000001ea4 <+59>:	add    $0x8,%rsp
    0x0000000000001ea8 <+63>:	retq   
    0x0000000000001ea9 <+64>:	callq  0x1e27 <crash_program>
@@ -29,14 +43,28 @@ Dump of assembler code for function phase_2:
    0x0000000000001605 <+6>:	sub    $0x28,%rsp
    0x0000000000001609 <+10>:	mov    %fs:0x28,%rax
    0x0000000000001612 <+19>:	mov    %rax,0x18(%rsp)
+   
+   // this xor function looks weird, so let's explain
+   // right now eax has some arbitrary value in it (likely from the last function
+   // xor is actually cancelling out that value in the register and turns it to zero 
+   
    0x0000000000001617 <+24>:	xor    %eax,%eax
+   
+   
    0x0000000000001619 <+26>:	mov    %rsp,%rsi
    0x000000000000161c <+29>:	callq  0x1e69 <read_six_numbers>
    0x0000000000001621 <+34>:	cmpl   $0x0,(%rsp)
    0x0000000000001625 <+38>:	js     0x1631 <phase_2+50>
    0x0000000000001627 <+40>:	mov    %rsp,%rbp
+   
+   // here the ebx register also has some stupid value in there
+   // I can see later in the program that ebx is getting moved into eax, which must be related to the solution
+   // This sets the value of ebx to 1, our first culprit
+   
    0x000000000000162a <+43>:	mov    $0x1,%ebx
-   0x000000000000162f <+48>:	jmp    0x1649 <phase_2+74>
+   
+   
+   0x000000000000162f <+48>:	jmp    0x1649 <phase_2+74> // jump to reading the rest of the program
    0x0000000000001631 <+50>:	callq  0x1e27 <crash_program>
    0x0000000000001636 <+55>:	jmp    0x1627 <phase_2+40>
    0x0000000000001638 <+57>:	callq  0x1e27 <crash_program>
@@ -44,11 +72,47 @@ Dump of assembler code for function phase_2:
    0x0000000000001640 <+65>:	add    $0x4,%rbp
    0x0000000000001644 <+69>:	cmp    $0x6,%ebx
    0x0000000000001647 <+72>:	je     0x1655 <phase_2+86>
+   
+   // here is that ebx move into eax we were talking about before 
+   // now we are switching to eax
+   
    0x0000000000001649 <+74>:	mov    %ebx,%eax
-   0x000000000000164b <+76>:	add    0x0(%rbp),%eax
+   0x000000000000164b <+76>:	add    0x0(%rbp),%eax // ooh, what are we moving into eax? must be helpful
+   
+   // please recall that ebx contained the value 1, but we moved that into eax (previously cleared by xor)
+   // this compare line tells us something very important
+   // at this point in the program we have just added a value into eax, one that we don't really understand but that's okay
+   // hmmm, maybe we should see what this new value in eax is???
+   
    0x000000000000164e <+79>:	cmp    %eax,0x4(%rbp)
-   0x0000000000001651 <+82>:	je     0x163d <phase_2+62>
-   0x0000000000001653 <+84>:	jmp    0x1638 <phase_2+57>
+   
+   (gdb) i r eax
+   eax      0x2      2
+   
+   // oh shoot! new value! a clue????
+   
+   
+   0x0000000000001651 <+82>:	je     0x163d <phase_2+62> // this helps us avoid that next line to crash
+   0x0000000000001653 <+84>:	jmp    0x1638 <phase_2+57> // crash :(, but we can escape! >:)
+   
+   // here let's take a break from this faux sequential format and let's go ahead and reformat this in a more familiar way 
+   
+   BOOM FOR LOOP :)
+   0x000000000000163d <+62>:	add    $0x1,%ebx // INCREMENTING VALUE (HOW MANY NUMBERS HAVE YOU ENTERED
+   0x0000000000001640 <+65>:	add    $0x4,%rbp
+   0x0000000000001644 <+69>:	cmp    $0x6,%ebx // CONDITION FOR STOPPING
+   0x0000000000001647 <+72>:	je     0x1655 <phase_2+86> // OFFICIAL EXIT IF +69 IS TRUE
+   
+   // So, what do we do with all this information? 
+      We know that every single iteration of the loop eax will be holding the correct next digit. Clearly, the work 
+   being done on rbp is changing its value in some weird way I don't care to understand. But, even if you have the wrong
+   digit at line <phase_2+79> you can still check the contents of eax to see that correct digit. Yes, you do have to go 
+   through the loop several times to start to see a pattern, but pretty soon it starts to emerge. The result ended up being
+   1 2 4 7 11 16, which you can pretty quickly figure out the pattern its using, even if you don't understand how rbp is 
+   being affected to produce these numbers. 
+   
+   // the rest of the program is just emptying out all the stack stuff to get ready for the next phase/function.
+   
    0x0000000000001655 <+86>:	mov    0x18(%rsp),%rax
    0x000000000000165a <+91>:	xor    %fs:0x28,%rax
    0x0000000000001663 <+100>:	jne    0x166c <phase_2+109>
@@ -57,3 +121,5 @@ Dump of assembler code for function phase_2:
    0x000000000000166a <+107>:	pop    %rbp
    0x000000000000166b <+108>:	retq   
    0x000000000000166c <+109>:	callq  0x1250 <__stack_chk_fail@plt>
+   
+   // ULTIMATE SOLUTION: 1 2 4 7 11 16
