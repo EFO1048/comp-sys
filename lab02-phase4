@@ -36,3 +36,30 @@ Dump of assembler code for function phase_4:
    0x00000000000017fd <+111>:	add    $0x18,%rsp
    0x0000000000001801 <+115>:	retq   
    0x0000000000001802 <+116>:	callq  0x1250 <__stack_chk_fail@plt>
+
+(gdb) disas func4
+Dump of assembler code for function func4:
+   0x000000000000174d <+0>:	endbr64 
+   0x0000000000001751 <+4>:	sub    $0x8,%rsp
+   0x0000000000001755 <+8>:	mov    %edx,%eax
+   0x0000000000001757 <+10>:	sub    %esi,%eax
+   0x0000000000001759 <+12>:	mov    %eax,%ecx
+   0x000000000000175b <+14>:	shr    $0x1f,%ecx
+   0x000000000000175e <+17>:	add    %eax,%ecx
+   0x0000000000001760 <+19>:	sar    %ecx
+   0x0000000000001762 <+21>:	add    %esi,%ecx
+   0x0000000000001764 <+23>:	cmp    %edi,%ecx
+   0x0000000000001766 <+25>:	jg     0x1774 <func4+39>
+   0x0000000000001768 <+27>:	mov    $0x0,%eax
+   0x000000000000176d <+32>:	jl     0x1780 <func4+51>
+   0x000000000000176f <+34>:	add    $0x8,%rsp
+   0x0000000000001773 <+38>:	retq   
+   0x0000000000001774 <+39>:	lea    -0x1(%rcx),%edx
+   0x0000000000001777 <+42>:	callq  0x174d <func4>
+   0x000000000000177c <+47>:	add    %eax,%eax
+   0x000000000000177e <+49>:	jmp    0x176f <func4+34>
+   0x0000000000001780 <+51>:	lea    0x1(%rcx),%esi
+   0x0000000000001783 <+54>:	callq  0x174d <func4>
+   0x0000000000001788 <+59>:	lea    0x1(%rax,%rax,1),%eax
+   0x000000000000178c <+63>:	jmp    0x176f <func4+34>
+End of assembler dump.
