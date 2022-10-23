@@ -1,0 +1,31 @@
+(gdb) disas phase_4
+Dump of assembler code for function phase_4:
+   0x000000000000178e <+0>:	endbr64 
+   0x0000000000001792 <+4>:	sub    $0x18,%rsp
+   0x0000000000001796 <+8>:	mov    %fs:0x28,%rax
+   0x000000000000179f <+17>:	mov    %rax,0x8(%rsp)
+   0x00000000000017a4 <+22>:	xor    %eax,%eax
+   0x00000000000017a6 <+24>:	lea    0x4(%rsp),%rcx
+   0x00000000000017ab <+29>:	mov    %rsp,%rdx
+   0x00000000000017ae <+32>:	lea    0x1c4f(%rip),%rsi        # 0x3404
+   0x00000000000017b5 <+39>:	callq  0x12f0 <__isoc99_sscanf@plt>
+   0x00000000000017ba <+44>:	cmp    $0x2,%eax
+   0x00000000000017bd <+47>:	jne    0x17c5 <phase_4+55>
+   0x00000000000017bf <+49>:	cmpl   $0xe,(%rsp)
+   0x00000000000017c3 <+53>:	jbe    0x17ca <phase_4+60>
+   0x00000000000017c5 <+55>:	callq  0x1e27 <crash_program>
+   0x00000000000017ca <+60>:	mov    $0xe,%edx
+   0x00000000000017cf <+65>:	mov    $0x0,%esi
+   0x00000000000017d4 <+70>:	mov    (%rsp),%edi
+   0x00000000000017d7 <+73>:	callq  0x174d <func4>
+   0x00000000000017dc <+78>:	cmp    $0x7,%eax
+   0x00000000000017df <+81>:	jne    0x17e8 <phase_4+90>
+   0x00000000000017e1 <+83>:	cmpl   $0x7,0x4(%rsp)
+   0x00000000000017e6 <+88>:	je     0x17ed <phase_4+95>
+   0x00000000000017e8 <+90>:	callq  0x1e27 <crash_program>
+   0x00000000000017ed <+95>:	mov    0x8(%rsp),%rax
+   0x00000000000017f2 <+100>:	xor    %fs:0x28,%rax
+   0x00000000000017fb <+109>:	jne    0x1802 <phase_4+116>
+   0x00000000000017fd <+111>:	add    $0x18,%rsp
+   0x0000000000001801 <+115>:	retq   
+   0x0000000000001802 <+116>:	callq  0x1250 <__stack_chk_fail@plt>
