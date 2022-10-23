@@ -1,0 +1,77 @@
+0x0000000000001671 <+0>:	endbr64 
+   0x0000000000001675 <+4>:	sub    $0x18,%rsp
+   0x0000000000001679 <+8>:	mov    %fs:0x28,%rax
+   0x0000000000001682 <+17>:	mov    %rax,0x8(%rsp)
+   0x0000000000001687 <+22>:	xor    %eax,%eax
+   0x0000000000001689 <+24>:	lea    0x4(%rsp),%rcx
+   0x000000000000168e <+29>:	mov    %rsp,%rdx
+   0x0000000000001691 <+32>:	lea    0x1d6c(%rip),%rsi        // rsi is seeming to be in sscanf
+   
+   // scanf in c has form of scanf("form", &var);
+   // from this we can infer there will be important information in rdi and rsi as paramenters
+   
+   0x0000000000001698 <+39>:	callq  0x12f0 <__isoc99_sscanf@plt> // reading our input, need to investigate
+   
+   // at the point of this sscanf rdi holds our input, and rsi holds the format "%d %d"
+   
+   (gdb) x/s $rsi
+   0x555555557404: "%d %d"
+   (gdb) x/s $rdi
+   0x555555559760 <input_strings+160>:     "1 0"
+
+   // line below tells us that 1 needs to be in eax
+   0x000000000000169d <+44>:	cmp    $0x1,%eax // checking if 1 is in eax
+   0x00000000000016a0 <+47>:	jle    0x16c0 <phase_3+79> // crash if it isn't 
+   0x00000000000016a2 <+49>:	cmpl   $0x7,(%rsp) 
+   0x00000000000016a6 <+53>:	ja     0x173c <phase_3+203>
+   0x00000000000016ac <+59>:	mov    (%rsp),%eax
+   0x00000000000016af <+62>:	lea    0x1aea(%rip),%rdx        # 0x31a0
+   0x00000000000016b6 <+69>:	movslq (%rdx,%rax,4),%rax
+   0x00000000000016ba <+73>:	add    %rdx,%rax
+   0x00000000000016bd <+76>:	notrack jmpq *%rax
+   0x00000000000016c0 <+79>:	callq  0x1e27 <crash_program>
+   0x00000000000016c5 <+84>:	jmp    0x16a2 <phase_3+49>
+   0x00000000000016c7 <+86>:	mov    $0x229,%eax
+   0x00000000000016cc <+91>:	sub    $0x295,%eax
+   0x00000000000016d1 <+96>:	add    $0x3ca,%eax
+   0x00000000000016d6 <+101>:	sub    $0x4d,%eax
+   0x00000000000016d9 <+104>:	add    $0x4d,%eax
+   0x00000000000016dc <+107>:	sub    $0x4d,%eax
+   0x00000000000016df <+110>:	add    $0x4d,%eax
+   0x00000000000016e2 <+113>:	sub    $0x4d,%eax
+   0x00000000000016e5 <+116>:	cmpl   $0x5,(%rsp)
+   0x00000000000016e9 <+120>:	jg     0x16f1 <phase_3+128>
+   
+   // came down here to see the next time we are comparing with eax
+   
+   0x00000000000016eb <+122>:	cmp    %eax,0x4(%rsp)
+   0x00000000000016ef <+126>:	je     0x16f6 <phase_3+133> // passes on to the rest
+   
+   (gdb) i r eax
+   eax            0xe8                232 // this must be our next number
+
+   
+   0x00000000000016f1 <+128>:	callq  0x1e27 <crash_program>
+   0x00000000000016f6 <+133>:	mov    0x8(%rsp),%rax
+   0x00000000000016fb <+138>:	xor    %fs:0x28,%rax
+   0x0000000000001704 <+147>:	jne    0x1748 <phase_3+215>
+   0x0000000000001706 <+149>:	add    $0x18,%rsp
+   0x000000000000170a <+153>:	retq   
+   0x000000000000170b <+154>:	mov    $0x0,%eax
+   0x0000000000001710 <+159>:	jmp    0x16cc <phase_3+91>
+   0x0000000000001712 <+161>:	mov    $0x0,%eax
+   0x0000000000001717 <+166>:	jmp    0x16d1 <phase_3+96>
+   0x0000000000001719 <+168>:	mov    $0x0,%eax
+   0x000000000000171e <+173>:	jmp    0x16d6 <phase_3+101>
+   0x0000000000001720 <+175>:	mov    $0x0,%eax
+   0x0000000000001725 <+180>:	jmp    0x16d9 <phase_3+104>
+   0x0000000000001727 <+182>:	mov    $0x0,%eax
+   0x000000000000172c <+187>:	jmp    0x16dc <phase_3+107>
+   0x000000000000172e <+189>:	mov    $0x0,%eax
+   0x0000000000001733 <+194>:	jmp    0x16df <phase_3+110>
+   0x0000000000001735 <+196>:	mov    $0x0,%eax
+   0x000000000000173a <+201>:	jmp    0x16e2 <phase_3+113>
+   0x000000000000173c <+203>:	callq  0x1e27 <crash_program>
+   0x0000000000001741 <+208>:	mov    $0x0,%eax
+   0x0000000000001746 <+213>:	jmp    0x16e5 <phase_3+116>
+   0x0000000000001748 <+215>:	callq  0x1250 <__stack_chk_fail@plt>
