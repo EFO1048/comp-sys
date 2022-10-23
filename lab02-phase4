@@ -8,6 +8,10 @@ Dump of assembler code for function phase_4:
    0x00000000000017a6 <+24>:	lea    0x4(%rsp),%rcx
    0x00000000000017ab <+29>:	mov    %rsp,%rdx
    0x00000000000017ae <+32>:	lea    0x1c4f(%rip),%rsi        # 0x3404
+   
+   // uh oh we have another scanf function looking for our input
+   // let's come back to that and check to see if anything else looks suspicious
+   
    0x00000000000017b5 <+39>:	callq  0x12f0 <__isoc99_sscanf@plt>
    0x00000000000017ba <+44>:	cmp    $0x2,%eax
    0x00000000000017bd <+47>:	jne    0x17c5 <phase_4+55>
@@ -17,6 +21,9 @@ Dump of assembler code for function phase_4:
    0x00000000000017ca <+60>:	mov    $0xe,%edx
    0x00000000000017cf <+65>:	mov    $0x0,%esi
    0x00000000000017d4 <+70>:	mov    (%rsp),%edi
+   
+   // func4???? hmmm....
+   
    0x00000000000017d7 <+73>:	callq  0x174d <func4>
    0x00000000000017dc <+78>:	cmp    $0x7,%eax
    0x00000000000017df <+81>:	jne    0x17e8 <phase_4+90>
