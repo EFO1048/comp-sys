@@ -9,8 +9,16 @@ Dump of assembler code for function phase_5:
    0x0000000000001824 <+29>:	mov    %rsp,%rdx
    0x0000000000001827 <+32>:	lea    0x1bd6(%rip),%rsi        # 0x3404
    0x000000000000182e <+39>:	callq  0x12f0 <__isoc99_sscanf@plt>
+   
+   // first time we are comparing eax here
+   // safe to assume there is two items again in eax
+   
    0x0000000000001833 <+44>:	cmp    $0x1,%eax
    0x0000000000001836 <+47>:	jle    0x1892 <phase_5+139>
+   
+   (gdb) i r eax
+   eax            0x2                2 // this must be our next number
+   
    0x0000000000001838 <+49>:	mov    (%rsp),%eax
    0x000000000000183b <+52>:	and    $0xf,%eax
    0x000000000000183e <+55>:	mov    %eax,(%rsp)
@@ -20,7 +28,7 @@ Dump of assembler code for function phase_5:
    0x000000000000184b <+68>:	mov    $0x0,%edx
    0x0000000000001850 <+73>:	lea    0x1969(%rip),%rsi        # 0x31c0 <array.3473>
    0x0000000000001857 <+80>:	add    $0x1,%edx
-   0x000000000000185a <+83>:	cltq   
+   0x000000000000185a <+83>:	cltq   // converts long to quad
    0x000000000000185c <+85>:	mov    (%rsi,%rax,4),%eax
    0x000000000000185f <+88>:	add    %eax,%ecx
    0x0000000000001861 <+90>:	cmp    $0xf,%eax
