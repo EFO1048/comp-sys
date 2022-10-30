@@ -19,8 +19,6 @@ Dump of assembler code for function phase_4:
    0x00000000000017ae <+32>:	lea    0x1c4f(%rip),%rsi        # 0x3404
    
    // uh oh we have another scanf function looking for our input
-   // let's come back to that and check to see if anything else looks suspicious
-   // oh shoot, okay so remember in phase_3 how rsi gave us some hints with scanf?
    // lets try this again (do this AT <+39>
    
    (gdb) x/s $rsi
@@ -41,8 +39,6 @@ Dump of assembler code for function phase_4:
    0x00000000000017ca <+60>:	mov    $0xe,%edx // setting edx to 14, very important later
    0x00000000000017cf <+65>:	mov    $0x0,%esi
    0x00000000000017d4 <+70>:	mov    (%rsp),%edi
-   
-   // func4???? hmmm....
    
    0x00000000000017d7 <+73>:	callq  0x174d <func4>
    
