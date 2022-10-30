@@ -73,7 +73,6 @@ Dump of assembler code for function func4:
    // weird math section, lots of arithmetic stuff going on here
    // Here's the thing, you don't need to understand all this because at <+78> we know that the second number has to be 7
    // You also know that the first is in between 2 and 14
-   // Plug and chug baby, plug and chug
    
    0x0000000000001755 <+8>:	mov    %edx,%eax // eax = 14
    0x0000000000001757 <+10>:	sub    %esi,%eax // eax = eax - esi (esi is empty first run)
