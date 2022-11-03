@@ -1,0 +1,34 @@
+NOTES: This phase is very similar to the example that the professor showed in class. The goal here is to pass
+a hex word long enough to alter the return statement so that it executes the code for touch1 instead.
+
+// getting assembly of ctarget where all the important stuff is
+unix> objdump -d ctarget
+
+// lots of stuff but only need touch1 and getbuf at this point
+
+0000000000001ef3 <getbuf>:
+    1ef3:	f3 0f 1e fa          	endbr64 
+    
+    // this line below tells us that the address will need to be 0x28
+    // bytes long, which translates to 40 bytes in decimal
+    1ef7:	48 83 ec 28          	sub    $0x28,%rsp
+    
+    1efb:	48 89 e7             	mov    %rsp,%rdi
+    1efe:	e8 bb 02 00 00       	callq  21be <Gets>
+    1f03:	b8 01 00 00 00       	mov    $0x1,%eax
+    1f08:	48 83 c4 28          	add    $0x28,%rsp
+    1f0c:	c3                   	retq   
+
+0000000000001f0d <touch1>:
+    1f0d:	f3 0f 1e fa          	endbr64 
+    1f11:	50                   	push   %rax
+    1f12:	58                   	pop    %rax
+    1f13:	48 83 ec 08          	sub    $0x8,%rsp
+    1f17:	c7 05 bb 54 00 00 01 	movl   $0x1,0x54bb(%rip)        # 73dc <vlevel>
+    1f1e:	00 00 00 
+    1f21:	48 8d 3d 6c 23 00 00 	lea    0x236c(%rip),%rdi        # 4294 <_IO_stdin_used+0x294>
+    1f28:	e8 73 f3 ff ff       	callq  12a0 <puts@plt>
+    1f2d:	bf 01 00 00 00       	mov    $0x1,%edi
+    1f32:	e8 15 05 00 00       	callq  244c <validate>
+    1f37:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f3c:	e8 bf f4 ff ff       	callq  1400 <exit@plt>
